@@ -1,0 +1,131 @@
+def read_database(file_name):
+    # Функция для чтения базы данных из файла
+    car_owners = []
+    with open(file_name, 'r') as file:
+        for line in file:
+            data = line.strip().split(', ')
+            owner = {
+                "Фамилия": data[0].split(': ')[1],
+                "Имя": data[1].split(': ')[1],
+                "Отчество": data[2].split(': ')[1],
+                "Регистрационный номер": data[3].split(': ')[1],
+                "Марка автомобиля": data[4].split(': ')[1],
+                "Объем двигателя": float(data[5].split(': ')[1]),
+                "Год выпуска": int(data[6].split(': ')[1]),
+                "Год постановки на учет": int(data[7].split(': ')[1])
+            }
+            car_owners.append(owner)
+    return car_owners
+
+def write_database(file_name, car_owners):
+    # Функция для записи базы данных в файл
+    with open(file_name, 'w') as file:
+        for owner in car_owners:
+            line = f"Фамилия: {owner['Фамилия']}, Имя: {owner['Имя']}, Отчество: {owner['Отчество']}, Регистрационный номер: {owner['Регистрационный номер']}, Марка автомобиля: {owner['Марка автомобиля']}, Объем двигателя: {owner['Объем двигателя']}, Год выпуска: {owner['Год выпуска']}, Год постановки на учет: {owner['Год постановки на учет']}\n"
+            file.write(line)
+
+def print_database(car_owners):
+    # Функция для вывода базы данных на экран
+    print("\nБаза данных автовладельцев:")
+    for owner in car_owners:
+        print(f"Фамилия: {owner['Фамилия']}, Имя: {owner['Имя']}, Отчество: {owner['Отчество']}, Регистрационный номер: {owner['Регистрационный номер']}, Марка автомобиля: {owner['Марка автомобиля']}, Объем двигателя: {owner['Объем двигателя']}, Год выпуска: {owner['Год выпуска']}, Год постановки на учет: {owner['Год постановки на учет']}")
+
+def add_entry(car_owners):
+    # Функция для добавления новой записи в базу данных
+    new_entry = {}
+    new_entry["Фамилия"] = input("Введите фамилию: ")
+    new_entry["Имя"] = input("Введите имя: ")
+    new_entry["Отчество"] = input("Введите отчество: ")
+    new_entry["Регистрационный номер"] = input("Введите регистрационный номер: ")
+    new_entry["Марка автомобиля"] = input("Введите марку автомобиля: ")
+    new_entry["Объем двигателя"] = float(input("Введите объем двигателя: "))
+    new_entry["Год выпуска"] = int(input("Введите год выпуска: "))
+    new_entry["Год постановки на учет"] = int(input("Введите год постановки на учет: "))
+    car_owners.append(new_entry)
+    print("Запись успешно добавлена.")
+
+def delete_entry(car_owners):
+    # Функция для удаления записи из базы данных
+    reg_number = input("Введите регистрационный номер автомобиля для удаления: ")
+    for owner in car_owners:
+        if owner["Регистрационный номер"] == reg_number:
+            car_owners.remove(owner)
+            print("Запись успешно удалена.")
+            return
+    print("Автовладелец с таким регистрационным номером не найден.")
+
+def bubble_sort(car_owners, key):
+    # Функция для сортировки списка методом пузырька по заданному ключу
+    n = len(car_owners)
+    for i in range(n - 1):
+        for j in range(0, n - i - 1):
+            if car_owners[j][key] < car_owners[j + 1][key]:
+                car_owners[j], car_owners[j + 1] = car_owners[j + 1], car_owners[j]
+
+def sort_by_registration_year_and_lastname(car_owners):
+    # Функция для сортировки базы данных по году постановки на учет и фамилии
+    bubble_sort(car_owners, "Год постановки на учет")
+    bubble_sort(car_owners, "Фамилия")
+    print("\nПолный список всех автомобилистов (отсортированный):")
+    for owner in car_owners:
+        print(f"Фамилия: {owner['Фамилия']}, Имя: {owner['Имя']}, Отчество: {owner['Отчество']}, Регистрационный номер: {owner['Регистрационный номер']}, Марка автомобиля: {owner['Марка автомобиля']}, Объем двигателя: {owner['Объем двигателя']}, Год выпуска: {owner['Год выпуска']}, Год постановки на учет: {owner['Год постановки на учет']}")
+
+def owners_by_car_brand(car_owners):
+    # Функция для вывода списка владельцев автомобилей указанной марки
+    brand = input("Введите марку автомобиля для отображения списка владельцев: ")
+    filtered_list = [owner for owner in car_owners if owner["Марка автомобиля"].lower() == brand.lower()]
+    bubble_sort(filtered_list, "Год выпуска")
+    bubble_sort(filtered_list, "Объем двигателя")
+    bubble_sort(filtered_list, "Фамилия")
+    print(f"\nСписок владельцев автомобилей марки {brand} (отсортированный):")
+    for owner in filtered_list:
+        print(f"Фамилия: {owner['Фамилия']}, Имя: {owner['Имя']}, Отчество: {owner['Отчество']}, Регистрационный номер: {owner['Регистрационный номер']}, Марка автомобиля: {owner['Марка автомобиля']}, Объем двигателя: {owner['Объем двигателя']}, Год выпуска: {owner['Год выпуска']}, Год постановки на учет: {owner['Год постановки на учет']}")
+
+def owners_by_production_year(car_owners):
+    # Функция для вывода списка владельцев автомобилей с годом выпуска ранее заданного
+    year = int(input("Введите год выпуска для отображения списка владельцев: "))
+    filtered_list = [owner for owner in car_owners if owner["Год выпуска"] < year]
+    bubble_sort(filtered_list, "Год выпуска")
+    bubble_sort(filtered_list, "Марка автомобиля")
+    print(f"\nСписок владельцев автомобилей с годом выпуска ранее {year} (отсортированный):")
+    for owner in filtered_list:
+        print(f"Фамилия: {owner['Фамилия']}, Имя: {owner['Имя']}, Отчество: {owner['Отчество']}, Регистрационный номер: {owner['Регистрационный номер']}, Марка автомобиля: {owner['Марка автомобиля']}, Объем двигателя: {owner['Объем двигателя']}, Год выпуска: {owner['Год выпуска']}, Год постановки на учет: {owner['Год постановки на учет']}")
+
+# Чтение базы данных из файла
+file_name = "q.txt"
+car_owners = read_database(file_name)
+
+# Пример использования
+while True:
+    print("\nМеню:")
+    print("1. Вывести базу данных.")
+    print("2. Добавить запись.")
+    print("3. Удалить запись.")
+    print("4. Полный список всех автомобилистов (отсортированный).")
+    print("5. Список владельцев автомобилей указанной марки.")
+    print("6. Список владельцев автомобилей с годом выпуска ранее заданного.")
+    print("7. Сохранить и выйти.")
+
+    choice = input("Выберите действие (введите номер): ")
+
+    if choice == "1":
+        print_database(car_owners)
+    elif choice == "2":
+        add_entry(car_owners)
+    elif choice == "3":
+        delete_entry(car_owners)
+    elif choice == "4":
+        sort_by_registration_year_and_lastname(car_owners)
+    elif choice == "5":
+        owners_by_car_brand(car_owners)
+    elif choice == "6":
+        owners_by_production_year(car_owners)
+    elif choice == "7":
+        # Сохранение базы данных в файл перед выходом
+        write_database(file_name, car_owners)
+        print("База данных успешно сохранена. Выход из программы.")
+        break
+    else:
+        print("Некорректный выбор. Пожалуйста, введите правильный номер.")
+
+
